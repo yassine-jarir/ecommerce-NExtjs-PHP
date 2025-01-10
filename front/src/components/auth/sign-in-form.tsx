@@ -39,23 +39,26 @@ export function SignInForm(): React.JSX.Element {
   });
   
 
-  const onSubmit = React.useCallback(
-    async (values: FormValues): Promise<void> => {
-      setIsPending(true);
-      setErrorMessage(null);
-  
-      try {
-      const logs =  await login(values.email, values.password);
-      console.log(logs);
+ const onSubmit = React.useCallback(
+  async (values: FormValues): Promise<void> => {
+    setIsPending(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await login(values.email, values.password);
+       if (response.user.role === 'admin') {
         router.push('/dashboard');
-      } catch (error: any) {
-        setErrorMessage(error.message);
-      } finally {
-        setIsPending(false);
+      } else {
+        router.push('/client');  
       }
-    },
-    [router, login]
-  );
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsPending(false);
+    }
+  },
+  [router, login]
+);
 
   return (
     <Stack spacing={4}>

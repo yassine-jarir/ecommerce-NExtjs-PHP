@@ -61,39 +61,40 @@ class UserController
         }
     }
 
-    public function login()
-    {
-        $data = json_decode(file_get_contents("php://input"));
+ public function login()
+{
+    $data = json_decode(file_get_contents("php://input"));
 
-        if (empty($data->email) || empty($data->password)) {
-            echo json_encode(['error' => 'Email and password are required']);
-            return;
-        }
-
-        $result = $this->user->login($data->email, $data->password);
-
-        if ($result) {
-            // Set session cookie to remember the user
-            setcookie('user', json_encode($result), time() + 86400, '/', 'localhost', true, true); // 1-day expiration
-
-            // Create session
-            $_SESSION['user_id'] = $result['id'];
-            $_SESSION['user_name'] = $result['name'];
-            $_SESSION['user_email'] = $result['email'];
-            $_SESSION['user_role'] = $result['role'];
-
-            // Generate CSRF token
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
-            echo json_encode([
-                'message' => 'Login successful',
-                'user' => $result,
-                'csrf_token' => $_SESSION['csrf_token']
-            ]);
-        } else {
-            echo json_encode(['error' => 'Invalid credentials']);
-        }
+    if (empty($data->email) || empty($data->password)) {
+        echo json_encode(['error' => 'Email and password are required']);
+        return;
     }
+
+    $result = $this->user->login($data->email, $data->password);
+
+    if ($result) {
+        // Set session cookie to remember the user
+        setcookie('user', json_encode($result), time() + 86400, '/', 'localhost', true, true);
+
+        // Create session
+        $_SESSION['user_id'] = $result['id'];
+        $_SESSION['user_name'] = $result['name'];
+        $_SESSION['user_email'] = $result['email'];
+        $_SESSION['user_role'] = $result['role'];
+
+        // Generate CSRF token
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        echo json_encode([
+            'message' => 'Login successful',
+            'user' => $result,
+            'csrf_token' => $_SESSION['csrf_token'],
+            'redirectTo' => $result['role'] === 'admin' ? '/dashboard' : '/'  
+        ]);
+    } else {
+        echo json_encode(['error' => 'Invalid credentials']);
+    }
+}
 
     public function checkAuth()
     {

@@ -5,11 +5,13 @@ require_once __DIR__ . '/../models/Product.php';
 require_once __DIR__ . '/../controllers/ProductController.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
-
+require_once __DIR__ . '/../models/Order.php';
+require_once __DIR__ . '/../controllers/OrderController.php';
 // Add error reporting
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
+use Controllers\OrderController;
 use Controllers\UserController;
 use Controllers\ProductController;
 $route = $_GET['route'] ?? '';
@@ -101,6 +103,34 @@ try {
                 $controller->toggleUserActivation();
             } else {
                 echo json_encode(['error' => 'Invalid request method. Expected POST.']);
+            }
+            break;
+        // order
+        case 'orders/create':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller = new OrderController();
+                $controller->create();
+            }
+            break;
+
+        case 'orders/user':
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $controller = new OrderController();
+                $controller->getUserOrders();
+            }
+            break;
+
+        case 'orders/all':
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $controller = new OrderController();
+                $controller->getAllOrders();
+            }
+            break;
+
+        case 'orders/stats':
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $controller = new OrderController();
+                $controller->getOrderStats();
             }
             break;
     }
