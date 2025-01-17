@@ -1,19 +1,18 @@
 <?php
-// routes/api.php - Update the requires at the top
-require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/Product.php';
 require_once __DIR__ . '/../controllers/ProductController.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 require_once __DIR__ . '/../models/Order.php';
+require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../controllers/OrderController.php';
 
 
 use Controllers\OrderController;
-use Controllers\UserController;
 use Controllers\ProductController;
-$route = $_GET['route'] ?? '';
+use Controllers\UserController;
 $id = $_GET['id'] ?? null;
+$route = $_GET['route'] ?? '';
 try {
 
     switch ($route) {
@@ -136,9 +135,9 @@ try {
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
+        'file' => $e->getFile(),
         'success' => false,
         'error' => $e->getMessage(),
-        'file' => $e->getFile(),
         'line' => $e->getLine()
     ]);
 }
