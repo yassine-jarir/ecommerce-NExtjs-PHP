@@ -7,9 +7,7 @@ require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 require_once __DIR__ . '/../models/Order.php';
 require_once __DIR__ . '/../controllers/OrderController.php';
-// Add error reporting
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+
 
 use Controllers\OrderController;
 use Controllers\UserController;
@@ -88,6 +86,14 @@ try {
             echo json_encode(['error' => 'Route not found.']);
             break;
         // active desactive
+         case 'users/toggle-activation':
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller = new UserController();
+                $controller->toggleUserActivation();
+            } else {
+                echo json_encode(['error' => 'Invalid request method. Expected POST.']);
+            }
+            break;
         case 'users':
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $controller = new UserController();
@@ -97,14 +103,7 @@ try {
             }
             break;
 
-        case 'users/toggle-activation':
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $controller = new UserController();
-                $controller->toggleUserActivation();
-            } else {
-                echo json_encode(['error' => 'Invalid request method. Expected POST.']);
-            }
-            break;
+       
         // order
         case 'orders/create':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
