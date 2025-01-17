@@ -1,4 +1,4 @@
-// In your middleware.ts
+ 
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(req) {
@@ -18,15 +18,16 @@ export async function middleware(req) {
     if (userCookie) {
       const userData = JSON.parse(userCookie.value);
       
+       if (userData.role === 'client' && adminRoutes.some(route => pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL('/client', req.url));
+      }
       // Prevent authenticated users from accessing auth routes
       if (authRoutes.includes(pathname)) {
         return NextResponse.redirect(new URL(userData.role === 'admin' ?? '/dashboard' , req.url));
       }
 
       // Prevent clients from accessing admin routes
-      if (userData.role === 'client' && adminRoutes.some(route => pathname.startsWith(route))) {
-        return NextResponse.redirect(new URL('/client', req.url));
-      }
+     
 
       // Prevent admins from accessing client-only routes
       if (userData.role === 'admin' && clientRoutes.some(route => pathname === route)) {
